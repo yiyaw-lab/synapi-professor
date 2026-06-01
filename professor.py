@@ -2,7 +2,8 @@ import os
 from dataclasses import dataclass
 from datetime import date
 from typing import List, Tuple
-
+from lesson_model import Lesson
+from curriculum.llm_foundation import LESSONS
 import requests
 from dotenv import load_dotenv
 
@@ -20,28 +21,6 @@ class Lesson:
     plain: str
     analogy: str
     exercise: str
-
-
-LESSONS: List[Lesson] = [
-    Lesson(
-        concept="Attention",
-        plain="Attention lets an LLM decide which parts of the input matter most.",
-        analogy="Like knowing which voice to listen to in a crowded room.",
-        exercise="Explain attention using a dinner table conversation.",
-    ),
-    Lesson(
-        concept="Tokenization",
-        plain="Tokenization breaks text into smaller pieces the model can process.",
-        analogy="Like cutting a sentence into puzzle pieces before giving it to the model.",
-        exercise="Look at the sentence 'I love language models' and guess how it might be split.",
-    ),
-    Lesson(
-        concept="Embeddings",
-        plain="Embeddings turn words or ideas into numbers that capture meaning.",
-        analogy="Like giving every concept a coordinate on a giant map of meaning.",
-        exercise="Explain why 'king' and 'queen' would be closer than 'king' and 'banana'.",
-    ),
-]
 
 
 class ConfigurationError(ValueError):
