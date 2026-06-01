@@ -136,10 +136,146 @@ REFERENCE_LIBRARY = {
     ],
 }
 
+# Notebook files that actually exist under labs/. Keep this in sync with the
+# real .ipynb files; concepts without an entry fall back to HANDS_ON only.
 NOTEBOOK_LINKS = {
-    "Tokenization": "../labs/01_tokenization.ipynb",
-    "Embeddings": "../labs/02_embeddings.ipynb",
-    "Attention": "../labs/03_attention.ipynb",
+    "Tokens": "../labs/01_tokens.ipynb",
+    "Tokenization": "../labs/02_tokenization.ipynb",
+    "Vocabulary": "../labs/03_vocabulary.ipynb",
+    "Embeddings": "../labs/04_embeddings.ipynb",
+    "Semantic Space": "../labs/05_semantic_space.ipynb",
+    "Similarity": "../labs/06_similarity.ipynb",
+    "Language as Numbers": "../labs/07_language_as_numbers.ipynb",
+    "Next Token Prediction": "../labs/08_next_token_prediction.ipynb",
+    "Attention": "../labs/09_attention.ipynb",
+    "Self-Attention": "../labs/10_self_attention.ipynb",
+}
+
+# A short, runnable hands-on for every lesson. Each is a self-contained
+# snippet or a concrete pen-and-paper prompt so a learner always has
+# something to *do*, even when no notebook exists for the concept.
+HANDS_ON = {
+    "Tokens": (
+        "Run: `import tiktoken; enc=tiktoken.get_encoding('cl100k_base'); "
+        "print([enc.decode([t]) for t in enc.encode('I love learning.')])` "
+        "and see the pieces."
+    ),
+    "Tokenization": (
+        "Tokenize 'unbelievable' vs 'believable' with tiktoken and compare "
+        "how many pieces each becomes."
+    ),
+    "Vocabulary": (
+        "Encode a rare name, a typo, and an emoji with tiktoken; count the "
+        "tokens each needs and note which fragment the most."
+    ),
+    "Embeddings": (
+        "Use sentence-transformers to embed 'king', 'queen', 'banana' and "
+        "print the vector lengths and first few dimensions."
+    ),
+    "Semantic Space": (
+        "Embed five words around a theme (e.g. school, teacher, student, "
+        "exam, banana) and rank them by distance from 'school'."
+    ),
+    "Similarity": (
+        "Compute cosine similarity between 'doctor'/'hospital' and "
+        "'doctor'/'banana' with sentence-transformers; compare the scores."
+    ),
+    "Language as Numbers": (
+        "Embed one sentence, print its vector, then write one sentence on "
+        "what meaning survives the conversion and what is lost."
+    ),
+    "Next Token Prediction": (
+        "Give a model the prompt 'The capital of France is' and predict the "
+        "next token yourself before checking; note your confidence."
+    ),
+    "Attention": (
+        "On paper, in 'The trophy didn't fit in the suitcase because it was "
+        "too big,' draw an arrow from 'it' to the word it attends to."
+    ),
+    "Self-Attention": (
+        "Repeat the arrow exercise for 'because it was too small' and "
+        "explain why the same word 'it' now points elsewhere."
+    ),
+    "Context Windows": (
+        "Count the tokens in a long document with tiktoken; identify what "
+        "would be dropped if the window held only the first half."
+    ),
+    "Positional Encoding": (
+        "Write 'dog bites man' and 'man bites dog'; explain in one line why "
+        "identical tokens in different positions mean different things."
+    ),
+    "Transformers": (
+        "Sketch the data path of one token through a transformer block: "
+        "embed -> attention -> feed-forward -> next layer."
+    ),
+    "Information Flow": (
+        "Pick an ambiguous word and write how its meaning sharpens after "
+        "the model reads two more surrounding sentences."
+    ),
+    "Pretraining": (
+        "List five facts you think a model could learn purely from reading "
+        "text, and one it could not."
+    ),
+    "Loss Functions": (
+        "By hand, compute cross-entropy loss for a 3-class prediction "
+        "[0.7, 0.2, 0.1] when the true class is the second one."
+    ),
+    "Gradient Descent": (
+        "Minimize f(x)=x**2 by hand: start at x=4 and take three steps of "
+        "x = x - 0.1*(2x); watch it approach zero."
+    ),
+    "Parameters": (
+        "Estimate parameters in a single linear layer of size 1024x1024 "
+        "(weights + biases); compare to a billion-parameter model."
+    ),
+    "Scaling Laws": (
+        "Read the Chinchilla abstract and write the rule of thumb for how "
+        "data should grow with model size, in one sentence."
+    ),
+    "Emergent Abilities": (
+        "Name one task small models fail at but large ones suddenly do; "
+        "argue whether it is truly 'emergent' or just better measured."
+    ),
+    "Learning Review": (
+        "In one paragraph, explain pretraining, loss, and parameters to a "
+        "friend who has never heard of machine learning."
+    ),
+    "Hallucinations": (
+        "Ask a model for a citation on an obscure topic and verify whether "
+        "the source actually exists."
+    ),
+    "Context Poisoning": (
+        "Write a short factual prompt, then prepend one false 'fact'; note "
+        "how the answer shifts to follow the planted claim."
+    ),
+    "Retrieval Failures": (
+        "Describe a query where the right document exists but keyword search "
+        "would miss it; suggest one fix."
+    ),
+    "Goodhart's Law in AI": (
+        "Pick a metric (e.g. answer length) and describe how optimizing it "
+        "could make answers worse while the score climbs."
+    ),
+    "Distribution Shift": (
+        "List two inputs unlike normal training text (slang, a new format) "
+        "and predict where the model would stumble."
+    ),
+    "Alignment": (
+        "Write one request that is easy to answer helpfully but should be "
+        "refused or reframed; explain why helpfulness alone is not enough."
+    ),
+    "Evaluation": (
+        "Design one question whose correct answer cannot be produced by "
+        "paraphrasing the prompt, separating recall from understanding."
+    ),
+    "Prompt Engineering": (
+        "Take a vague prompt ('write about dogs') and rewrite it with a "
+        "role, goal, constraints, and an output format."
+    ),
+    "Systems Thinking for AI": (
+        "Map one AI product as a system: model, data, user, interface, "
+        "feedback loop, and one failure mode for each."
+    ),
 }
 
 TOOLING = {
