@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import List, Tuple
 from lesson_model import Lesson
-from curriculum.llm_foundation import LESSONS
+from curriculum.llm_foundation import LLM_FOUNDATION
 import requests
 from dotenv import load_dotenv
 
@@ -94,7 +94,7 @@ def send_telegram_message(bot_token: str, chat_id: str, text: str, api_base: str
 
 def main() -> int:
     bot_token, chat_id, api_base, recipient = load_config()
-    lesson = select_daily_lesson(LESSONS)
+    lesson = select_daily_lesson(LLM_FOUNDATION)
     message = build_message(recipient, lesson)
 
     result = send_telegram_message(bot_token, chat_id, message, api_base)

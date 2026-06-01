@@ -1,7 +1,7 @@
 from lesson_model import Lesson
 
 
-LESSONS = [
+LLM_FOUNDATION = [
     Lesson(
         concept="Tokens",
         plain="LLMs do not read words directly. They read tokens: small chunks of text that may be words, word parts, punctuation, or spaces.",
