@@ -4,6 +4,7 @@ from datetime import date
 from typing import List, Tuple
 from lesson_model import Lesson
 from curriculum.llm_foundation import LLM_FOUNDATION
+from curriculum.lesson_metadata import NOTEBOOK_LINKS, REFERENCE_LIBRARY
 import requests
 from dotenv import load_dotenv
 
@@ -58,6 +59,14 @@ def select_daily_lesson(lessons: List[Lesson]) -> Lesson:
 
 
 def build_message(recipient: str, lesson: Lesson) -> str:
+    notebook = NOTEBOOK_LINKS.get(lesson.concept)
+    notebook_text = f"\n\nOptional lab:\n{notebook}" if notebook else ""
+
+    references = REFERENCE_LIBRARY.get(lesson.concept, [])
+    references_text = (
+        "\n\nRead more:\n" + "\n".join(references) if references else ""
+    )
+
     return (
         f"Good morning, {recipient}.\n\n"
         f"Today’s concept: {lesson.concept}\n\n"
@@ -67,6 +76,8 @@ def build_message(recipient: str, lesson: Lesson) -> str:
         f"{lesson.analogy}\n\n"
         "Tiny exercise:\n\n"
         f"{lesson.exercise}"
+        f"{references_text}"
+        f"{notebook_text}"
     )
 
 
