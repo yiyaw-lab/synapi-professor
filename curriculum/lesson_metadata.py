@@ -1,6 +1,19 @@
-from typing import Dict, List
+"""Per-concept side data, all keyed by ``Lesson.concept``.
 
-LessonMetadata = Dict[str, List[str]]
+Kept separate from ``llm_foundation.py`` so the lesson text stays readable and
+the links/tooling can change independently:
+
+    REFERENCE_LIBRARY  concept -> 1-3 canonical URLs ("Go deeper" in the message)
+    NOTEBOOK_FILES     concept -> bare lab filename (professor.py builds the URLs)
+    TOOLING            library -> (purpose, install command) for running labs locally
+    LEARNING_NOTES     a small combined view used by docs/tooling
+
+Invariant (enforced by ``tests/test_curriculum.py``): every concept in
+``LLM_FOUNDATION`` has an entry in both ``REFERENCE_LIBRARY`` and
+``NOTEBOOK_FILES``, and every notebook filename exists on disk in ``labs/``.
+"""
+
+LessonMetadata = dict[str, list[str]]
 
 # One to three canonical resources per lesson for deeper study.
 # Preference order: original papers, official docs, then trusted explainers
@@ -150,6 +163,26 @@ NOTEBOOK_FILES = {
     "Next Token Prediction": "08_next_token_prediction.ipynb",
     "Attention": "09_attention.ipynb",
     "Self-Attention": "10_self_attention.ipynb",
+    "Context Windows": "11_context_windows.ipynb",
+    "Positional Encoding": "12_positional_encoding.ipynb",
+    "Transformers": "13_transformers.ipynb",
+    "Information Flow": "14_information_flow.ipynb",
+    "Pretraining": "15_pretraining.ipynb",
+    "Loss Functions": "16_loss_functions.ipynb",
+    "Gradient Descent": "17_gradient_descent.ipynb",
+    "Parameters": "18_parameters.ipynb",
+    "Scaling Laws": "19_scaling_laws.ipynb",
+    "Emergent Abilities": "20_emergent_abilities.ipynb",
+    "Learning Review": "21_learning_review.ipynb",
+    "Hallucinations": "22_hallucinations.ipynb",
+    "Context Poisoning": "23_context_poisoning.ipynb",
+    "Retrieval Failures": "24_retrieval_failures.ipynb",
+    "Goodhart's Law in AI": "25_goodharts_law.ipynb",
+    "Distribution Shift": "26_distribution_shift.ipynb",
+    "Alignment": "27_alignment.ipynb",
+    "Evaluation": "28_evaluation.ipynb",
+    "Prompt Engineering": "29_prompt_engineering.ipynb",
+    "Systems Thinking for AI": "30_systems_thinking.ipynb",
 }
 
 TOOLING = {
