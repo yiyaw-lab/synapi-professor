@@ -1,5 +1,19 @@
-from lesson_model import Lesson
+"""The curriculum: 30 ordered ``Lesson`` objects, from tokens to AI systems.
 
+This module is the content source of truth. ``LLM_FOUNDATION`` is a plain list,
+so the day's lesson is just ``LLM_FOUNDATION[date_ordinal % 30]`` (see
+``professor.select_daily_lesson``). The list order also defines the lab numbering
+in ``labs/`` and the week-by-week grouping in ``learning_path.py``.
+
+Each entry is data only — explanation, analogy, a current-frontier hook, and one
+bold move. Per-concept references and notebook filenames live alongside in
+``lesson_metadata.py``, keyed by ``concept``.
+
+License: this lesson content is licensed CC BY 4.0, © 2026 Coaur Inc. (see
+``LICENSE-CONTENT``), separate from the repository's Apache-2.0 code license.
+"""
+
+from lesson_model import Lesson
 
 LLM_FOUNDATION = [
     Lesson(

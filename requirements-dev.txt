@@ -1,0 +1,17 @@
+# Development + CI dependencies. Install with: pip install -r requirements-dev.txt
+-r requirements.txt
+
+pytest
+ruff
+mypy
+types-requests
+
+# Notebook validation + headless execution (lightweight labs).
+nbformat
+nbclient
+ipykernel
+
+# Lightweight labs install these at run time via %pip; preinstalling lets CI
+# execute them without per-notebook network installs.
+tiktoken
+numpy

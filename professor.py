@@ -1,11 +1,27 @@
+"""Entry point: pick the day's lesson, format it, and send it to Telegram.
+
+The daily run is a short pipeline:
+
+    select_daily_lesson(LLM_FOUNDATION)   # deterministic from today's date
+        -> build_message(recipient, ...)  # plain text with lab + reference links
+        -> send_telegram_message(...)     # POST to the Telegram Bot API
+
+Configuration comes from environment variables (or a local ``.env``); see
+``load_config`` and the README's Configuration table. Lab links are built from
+``GITHUB_REPO``/``GITHUB_BRANCH`` so a fork points at its own notebooks.
+
+Run directly to send today's lesson:  ``python professor.py``
+"""
+
 import os
 from datetime import date
-from typing import List, Tuple
-from lesson_model import Lesson
-from curriculum.llm_foundation import LLM_FOUNDATION
-from curriculum.lesson_metadata import NOTEBOOK_FILES, REFERENCE_LIBRARY
+
 import requests
 from dotenv import load_dotenv
+
+from curriculum.lesson_metadata import NOTEBOOK_FILES, REFERENCE_LIBRARY
+from curriculum.llm_foundation import LLM_FOUNDATION
+from lesson_model import Lesson
 
 load_dotenv(override=True)
 
@@ -36,26 +52,30 @@ class TelegramSendError(RuntimeError):
     pass
 
 
-def load_config() -> Tuple[str, str, str, str]:
+def load_config() -> tuple[str, str, str, str]:
     bot_token = TELEGRAM_BOT_TOKEN
     chat_id = TELEGRAM_CHAT_ID
     api_base = TELEGRAM_API_BASE_URL
     recipient = RECIPIENT_NAME
 
-    missing = [name for name, value in (
-        ("TELEGRAM_BOT_TOKEN", bot_token),
-        ("TELEGRAM_CHAT_ID", chat_id),
-    ) if not value]
+    missing = [
+        name
+        for name, value in (
+            ("TELEGRAM_BOT_TOKEN", bot_token),
+            ("TELEGRAM_CHAT_ID", chat_id),
+        )
+        if not value
+    ]
 
     if missing:
-        raise ConfigurationError(
-            f"Missing environment variables: {', '.join(missing)}"
-        )
+        raise ConfigurationError(f"Missing environment variables: {', '.join(missing)}")
 
+    # The missing-check above guarantees these are set; assert narrows the types.
+    assert bot_token is not None and chat_id is not None
     return bot_token, chat_id, api_base, recipient
 
 
-def select_daily_lesson(lessons: List[Lesson]) -> Lesson:
+def select_daily_lesson(lessons: list[Lesson]) -> Lesson:
     if not lessons:
         raise ValueError("Lesson list must contain at least one entry.")
     day_index = date.today().toordinal() % len(lessons)
@@ -74,9 +94,7 @@ def build_message(recipient: str, lesson: Lesson) -> str:
         lab_text = ""
 
     references = REFERENCE_LIBRARY.get(lesson.concept, [])
-    references_text = (
-        "\n\nGo deeper:\n" + "\n".join(references) if references else ""
-    )
+    references_text = "\n\nGo deeper:\n" + "\n".join(references) if references else ""
 
     return (
         f"Good morning, {recipient}.\n\n"

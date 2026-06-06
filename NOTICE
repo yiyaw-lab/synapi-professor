@@ -1,0 +1,12 @@
+YiyaProfessor
+Copyright 2026 Coaur Inc.
+
+This product includes software developed by Coaur Inc.
+
+The software in this repository (Python source, the notebook generator, tests,
+and CI configuration) is licensed under the Apache License, Version 2.0; see the
+LICENSE file.
+
+The educational content — the lesson text in curriculum/ and the project
+documentation — is licensed separately under the Creative Commons Attribution 4.0
+International License (CC BY 4.0); see the LICENSE-CONTENT file.

@@ -1,0 +1,36 @@
+{
+  "light": [
+    "01_tokens.ipynb",
+    "02_tokenization.ipynb",
+    "03_vocabulary.ipynb",
+    "09_attention.ipynb",
+    "10_self_attention.ipynb",
+    "11_context_windows.ipynb",
+    "12_positional_encoding.ipynb",
+    "13_transformers.ipynb",
+    "15_pretraining.ipynb",
+    "16_loss_functions.ipynb",
+    "17_gradient_descent.ipynb",
+    "18_parameters.ipynb",
+    "19_scaling_laws.ipynb",
+    "20_emergent_abilities.ipynb",
+    "21_learning_review.ipynb",
+    "22_hallucinations.ipynb",
+    "23_context_poisoning.ipynb",
+    "24_retrieval_failures.ipynb",
+    "25_goodharts_law.ipynb",
+    "26_distribution_shift.ipynb",
+    "27_alignment.ipynb",
+    "28_evaluation.ipynb",
+    "29_prompt_engineering.ipynb",
+    "30_systems_thinking.ipynb"
+  ],
+  "heavy": [
+    "04_embeddings.ipynb",
+    "05_semantic_space.ipynb",
+    "06_similarity.ipynb",
+    "07_language_as_numbers.ipynb",
+    "08_next_token_prediction.ipynb",
+    "14_information_flow.ipynb"
+  ]
+}

@@ -1,8 +1,15 @@
-from typing import List, Dict
+"""Recommended tools for running the labs locally.
 
-Tool = Dict[str, str]
+Reference data for humans (and the README), not used by the daily sender. The
+labs install what they need at run time via ``%pip`` when opened in Colab, so
+this list matters only if you prefer to run the notebooks on your own machine.
+``RECOMMENDED_TOOLING`` describes each library; ``RECOMMENDED_COMMANDS`` is a
+copy-paste setup sequence.
+"""
 
-RECOMMENDED_TOOLING: List[Tool] = [
+Tool = dict[str, str]
+
+RECOMMENDED_TOOLING: list[Tool] = [
     {
         "name": "Python 3.10+",
         "purpose": "Runtime for notebooks and examples.",

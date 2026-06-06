@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dev dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Type-check (mypy)
+        run: mypy
+
+      - name: Tests (pytest)
+        run: pytest -q
+
+      - name: Notebooks match the generator (no drift)
+        run: |
+          python labs/_generate.py
+          git diff --exit-code labs/
+
+      - name: Register the Jupyter kernel
+        run: python -m ipykernel install --user --name python3
+
+      - name: Execute lightweight labs top to bottom
+        run: python labs/_run_light.py
