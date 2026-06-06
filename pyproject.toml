@@ -1,7 +1,7 @@
 [project]
-name = "yiyaprofessor"
+name = "synapi-professor"
 version = "0.1.0"
-description = "A daily professor for the foundations of large language models."
+description = "Prof. Syd: a daily professor for the foundations of large language models, by Synapi."
 requires-python = ">=3.10"
 license = "Apache-2.0"
 authors = [{ name = "Coaur Inc." }]

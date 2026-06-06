@@ -36,7 +36,7 @@ GREETING = os.getenv("GREETING", "Good morning")
 
 # Repo slug used to build clickable lab links. The notebooks live on the
 # default branch under labs/; GitHub renders them and Colab runs them in-browser.
-GITHUB_REPO = os.getenv("GITHUB_REPO", "yiyaw-lab/YiyaProfessor")
+GITHUB_REPO = os.getenv("GITHUB_REPO", "yiyaw-lab/synapi-professor")
 GITHUB_BRANCH = os.getenv("GITHUB_BRANCH", "main")
 
 
