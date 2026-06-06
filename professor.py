@@ -28,7 +28,11 @@ load_dotenv(override=True)
 TELEGRAM_API_BASE_URL = os.getenv("TELEGRAM_API_BASE_URL", "https://api.telegram.org")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-RECIPIENT_NAME = os.getenv("RECIPIENT_NAME", "Yiya")
+
+# Personalization. RECIPIENT_NAME is optional: leave it empty for a name-less
+# greeting ("Good morning."). GREETING sets the opening line's tone.
+RECIPIENT_NAME = os.getenv("RECIPIENT_NAME", "")
+GREETING = os.getenv("GREETING", "Good morning")
 
 # Repo slug used to build clickable lab links. The notebooks live on the
 # default branch under labs/; GitHub renders them and Colab runs them in-browser.
@@ -52,11 +56,12 @@ class TelegramSendError(RuntimeError):
     pass
 
 
-def load_config() -> tuple[str, str, str, str]:
+def load_config() -> tuple[str, str, str, str, str]:
     bot_token = TELEGRAM_BOT_TOKEN
     chat_id = TELEGRAM_CHAT_ID
     api_base = TELEGRAM_API_BASE_URL
     recipient = RECIPIENT_NAME
+    greeting = GREETING
 
     missing = [
         name
@@ -72,7 +77,7 @@ def load_config() -> tuple[str, str, str, str]:
 
     # The missing-check above guarantees these are set; assert narrows the types.
     assert bot_token is not None and chat_id is not None
-    return bot_token, chat_id, api_base, recipient
+    return bot_token, chat_id, api_base, recipient, greeting
 
 
 def select_daily_lesson(lessons: list[Lesson]) -> Lesson:
@@ -82,7 +87,17 @@ def select_daily_lesson(lessons: list[Lesson]) -> Lesson:
     return lessons[day_index]
 
 
-def build_message(recipient: str, lesson: Lesson) -> str:
+def format_greeting(greeting: str, recipient: str) -> str:
+    """The opening line: include the name only when one is configured.
+
+    "Good morning" + "Sam" -> "Good morning, Sam."
+    "Good morning" + ""    -> "Good morning."
+    """
+    name = recipient.strip()
+    return f"{greeting}, {name}." if name else f"{greeting}."
+
+
+def build_message(recipient: str, lesson: Lesson, greeting: str = "Good morning") -> str:
     filename = NOTEBOOK_FILES.get(lesson.concept)
     if filename:
         lab_text = (
@@ -97,7 +112,7 @@ def build_message(recipient: str, lesson: Lesson) -> str:
     references_text = "\n\nGo deeper:\n" + "\n".join(references) if references else ""
 
     return (
-        f"Good morning, {recipient}.\n\n"
+        f"{format_greeting(greeting, recipient)}\n\n"
         f"Today’s concept: {lesson.concept}\n\n"
         "The idea:\n\n"
         f"{lesson.plain}\n\n"
@@ -135,9 +150,9 @@ def send_telegram_message(bot_token: str, chat_id: str, text: str, api_base: str
 
 
 def main() -> int:
-    bot_token, chat_id, api_base, recipient = load_config()
+    bot_token, chat_id, api_base, recipient, greeting = load_config()
     lesson = select_daily_lesson(LLM_FOUNDATION)
-    message = build_message(recipient, lesson)
+    message = build_message(recipient, lesson, greeting)
 
     result = send_telegram_message(bot_token, chat_id, message, api_base)
     print("Message sent successfully:", result)
