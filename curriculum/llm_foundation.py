@@ -8,6 +8,9 @@ in ``labs/`` and the week-by-week grouping in ``learning_path.py``.
 Each entry is data only — explanation, analogy, a current-frontier hook, and one
 bold move. Per-concept references and notebook filenames live alongside in
 ``lesson_metadata.py``, keyed by ``concept``.
+
+License: this lesson content is licensed CC BY 4.0, © 2026 Coaur Inc. (see
+``LICENSE-CONTENT``), separate from the repository's Apache-2.0 code license.
 """
 
 from lesson_model import Lesson

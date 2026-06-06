@@ -3,6 +3,8 @@ name = "yiyaprofessor"
 version = "0.1.0"
 description = "A daily professor for the foundations of large language models."
 requires-python = ">=3.10"
+license = "Apache-2.0"
+authors = [{ name = "Coaur Inc." }]
 dependencies = [
     "requests",
     "python-dotenv",

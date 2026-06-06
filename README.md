@@ -179,5 +179,11 @@ regenerate; CI rejects any drift between the two.
 
 ## License
 
-No license is currently specified. If you intend others to reuse this code, add a
-`LICENSE` file.
+This project is dual-licensed by its nature — code and content are licensed
+separately:
+
+- **Code** (Python source, the notebook generator, tests, CI) — Apache License 2.0,
+  © 2026 Coaur Inc. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+- **Educational content** (the lessons in [curriculum/](curriculum/) and the docs) —
+  [Creative Commons Attribution 4.0 (CC BY 4.0)](LICENSE-CONTENT), © 2026 Coaur Inc.
+  Reuse freely, including commercially; just credit Coaur Inc.
