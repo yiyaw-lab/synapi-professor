@@ -1,8 +1,9 @@
-# YiyaProfessor
+# Synapi Professor
 
-[![CI](https://github.com/yiyaw-lab/YiyaProfessor/actions/workflows/ci.yml/badge.svg)](https://github.com/yiyaw-lab/YiyaProfessor/actions/workflows/ci.yml)
+[![CI](https://github.com/yiyaw-lab/synapi-professor/actions/workflows/ci.yml/badge.svg)](https://github.com/yiyaw-lab/synapi-professor/actions/workflows/ci.yml)
 
-A tiny daily professor for the foundations of large language models.
+Meet **Prof. Syd** — a tiny daily professor for the foundations of large language
+models, part of [Synapi](https://synapi.app) by Coaur.
 
 Every morning it picks one concept from a 30-lesson curriculum and sends it to
 Telegram — plain explanation, a vivid analogy, a note from the current frontier,
@@ -108,24 +109,31 @@ You'll need a Telegram bot and a chat to send to.
    pip install -r requirements.txt
    ```
 
-4. **Configure** a `.env` file (see below) and send a lesson:
+4. **Configure** — copy the template and fill in your values, then send a lesson:
 
    ```bash
+   cp .env.example .env   # then edit .env
    python professor.py
    ```
 
 ### Configuration
 
-Set these as environment variables or in a `.env` file:
+Every setting is an environment variable (or a line in `.env`). The only required
+ones are the two Telegram values; everything else has a sensible default.
+[.env.example](.env.example) documents them all with comments.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
 | `TELEGRAM_BOT_TOKEN` | yes | — | Bot token from BotFather |
 | `TELEGRAM_CHAT_ID` | yes | — | Where to send the lesson |
-| `RECIPIENT_NAME` | no | `Yiya` | Name in the greeting |
+| `RECIPIENT_NAME` | no | _(empty)_ | Your name in the greeting. Empty → a name-less greeting (`Good morning.`) |
+| `GREETING` | no | `Good morning` | The opening line's tone (e.g. `Hey`, `Hi there`) |
 | `TELEGRAM_API_BASE_URL` | no | `https://api.telegram.org` | Override the API host |
-| `GITHUB_REPO` | no | `yiyaw-lab/YiyaProfessor` | Repo slug for lab links |
+| `GITHUB_REPO` | no | `yiyaw-lab/synapi-professor` | Repo slug for lab links |
 | `GITHUB_BRANCH` | no | `main` | Branch for lab links |
+
+For example, `RECIPIENT_NAME=Sam` with `GREETING=Hey` opens each lesson with
+*"Hey, Sam."*
 
 > `.env` is gitignored. Never commit your bot token.
 

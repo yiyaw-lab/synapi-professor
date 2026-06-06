@@ -64,17 +64,41 @@ def test_select_daily_lesson_rejects_empty():
 
 
 def test_build_message_includes_all_lesson_fields():
-    msg = professor.build_message("Yiya", SAMPLE)
-    assert "Yiya" in msg
+    msg = professor.build_message("Sam", SAMPLE)
+    assert "Sam" in msg
     for field in (SAMPLE.concept, SAMPLE.plain, SAMPLE.analogy, SAMPLE.frontier, SAMPLE.bold_move):
         assert field in msg
+
+
+def test_build_message_greeting_with_name():
+    msg = professor.build_message("Sam", SAMPLE, greeting="Good morning")
+    assert msg.startswith("Good morning, Sam.")
+
+
+def test_build_message_greeting_without_name():
+    # Empty/whitespace name -> name-less greeting, no dangling comma.
+    for empty in ("", "   "):
+        msg = professor.build_message(empty, SAMPLE)
+        assert msg.startswith("Good morning.")
+        assert "Good morning," not in msg
+
+
+def test_build_message_custom_greeting():
+    msg = professor.build_message("Sam", SAMPLE, greeting="Hey")
+    assert msg.startswith("Hey, Sam.")
+
+
+def test_format_greeting_helper():
+    assert professor.format_greeting("Good morning", "Sam") == "Good morning, Sam."
+    assert professor.format_greeting("Good morning", "") == "Good morning."
+    assert professor.format_greeting("Hi", "  Pat  ") == "Hi, Pat."
 
 
 def test_build_message_includes_lab_and_references_when_present():
     # "Tokens" has both a notebook and references registered.
     assert "Tokens" in NOTEBOOK_FILES
     assert REFERENCE_LIBRARY.get("Tokens")
-    msg = professor.build_message("Yiya", SAMPLE)
+    msg = professor.build_message("Sam", SAMPLE)
     assert "Lab" in msg
     assert "colab.research.google.com" in msg
     assert "Go deeper:" in msg
@@ -83,7 +107,7 @@ def test_build_message_includes_lab_and_references_when_present():
 
 def test_build_message_omits_lab_block_for_unknown_concept():
     lesson = Lesson("Nonexistent Concept", "p", "a", "f", "b")
-    msg = professor.build_message("Yiya", lesson)
+    msg = professor.build_message("Sam", lesson)
     assert "Lab" not in msg
     assert "colab" not in msg
     assert "Go deeper:" not in msg
@@ -106,8 +130,24 @@ def test_load_config_returns_values_when_present(monkeypatch):
     monkeypatch.setattr(professor, "TELEGRAM_CHAT_ID", "123")
     monkeypatch.setattr(professor, "TELEGRAM_API_BASE_URL", "https://example.test")
     monkeypatch.setattr(professor, "RECIPIENT_NAME", "Pat")
-    bot, chat, api, recipient = professor.load_config()
-    assert (bot, chat, api, recipient) == ("tok", "123", "https://example.test", "Pat")
+    monkeypatch.setattr(professor, "GREETING", "Hey")
+    bot, chat, api, recipient, greeting = professor.load_config()
+    assert (bot, chat, api, recipient, greeting) == (
+        "tok",
+        "123",
+        "https://example.test",
+        "Pat",
+        "Hey",
+    )
+
+
+def test_load_config_allows_empty_recipient(monkeypatch):
+    # Name is optional for a public user; only the Telegram vars are required.
+    monkeypatch.setattr(professor, "TELEGRAM_BOT_TOKEN", "tok")
+    monkeypatch.setattr(professor, "TELEGRAM_CHAT_ID", "123")
+    monkeypatch.setattr(professor, "RECIPIENT_NAME", "")
+    _, _, _, recipient, _ = professor.load_config()
+    assert recipient == ""
 
 
 # --- send_telegram_message ----------------------------------------------
