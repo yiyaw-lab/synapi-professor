@@ -194,4 +194,7 @@ separately:
   © 2026 Coaur Inc. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
 - **Educational content** (the lessons in [curriculum/](curriculum/) and the docs) —
   [Creative Commons Attribution 4.0 (CC BY 4.0)](LICENSE-CONTENT), © 2026 Coaur Inc.
-  Reuse freely, including commercially; just credit Coaur Inc.
+  Reuse freely, including commercially; just credit *Synapi Professor by Yiya Wang
+  (Coaur Inc.)*.
+
+Built by [Yiya Wang](https://github.com/yiyaw-lab) at Coaur.

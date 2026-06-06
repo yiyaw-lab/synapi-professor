@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Prof. Syd: a daily professor for the foundations of large language models, by Synapi."
 requires-python = ">=3.10"
 license = "Apache-2.0"
-authors = [{ name = "Coaur Inc." }]
+authors = [{ name = "Yiya Wang" }, { name = "Coaur Inc." }]
 dependencies = [
     "requests",
     "python-dotenv",
