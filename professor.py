@@ -1,10 +1,9 @@
 import os
-from dataclasses import dataclass
 from datetime import date
 from typing import List, Tuple
 from lesson_model import Lesson
 from curriculum.llm_foundation import LLM_FOUNDATION
-from curriculum.lesson_metadata import NOTEBOOK_LINKS, REFERENCE_LIBRARY, HANDS_ON
+from curriculum.lesson_metadata import NOTEBOOK_FILES, REFERENCE_LIBRARY
 import requests
 from dotenv import load_dotenv
 
@@ -15,13 +14,18 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 RECIPIENT_NAME = os.getenv("RECIPIENT_NAME", "Yiya")
 
+# Repo slug used to build clickable lab links. The notebooks live on the
+# default branch under labs/; GitHub renders them and Colab runs them in-browser.
+GITHUB_REPO = os.getenv("GITHUB_REPO", "yiyaw-lab/YiyaProfessor")
+GITHUB_BRANCH = os.getenv("GITHUB_BRANCH", "main")
 
-@dataclass(frozen=True)
-class Lesson:
-    concept: str
-    plain: str
-    analogy: str
-    exercise: str
+
+def github_lab_url(filename: str) -> str:
+    return f"https://github.com/{GITHUB_REPO}/blob/{GITHUB_BRANCH}/labs/{filename}"
+
+
+def colab_lab_url(filename: str) -> str:
+    return f"https://colab.research.google.com/github/{GITHUB_REPO}/blob/{GITHUB_BRANCH}/labs/{filename}"
 
 
 class ConfigurationError(ValueError):
@@ -59,29 +63,34 @@ def select_daily_lesson(lessons: List[Lesson]) -> Lesson:
 
 
 def build_message(recipient: str, lesson: Lesson) -> str:
+    filename = NOTEBOOK_FILES.get(lesson.concept)
+    if filename:
+        lab_text = (
+            "\n\n🧪 Lab (opens in Colab, runs as-is):\n"
+            f"{colab_lab_url(filename)}\n"
+            f"{github_lab_url(filename)}"
+        )
+    else:
+        lab_text = ""
+
     references = REFERENCE_LIBRARY.get(lesson.concept, [])
     references_text = (
-        "\n\nRead more:\n" + "\n".join(references) if references else ""
+        "\n\nGo deeper:\n" + "\n".join(references) if references else ""
     )
-
-    hands_on = HANDS_ON.get(lesson.concept)
-    hands_on_text = f"\n\nHands-on:\n\n{hands_on}" if hands_on else ""
-
-    notebook = NOTEBOOK_LINKS.get(lesson.concept)
-    notebook_text = f"\n\nOptional lab:\n{notebook}" if notebook else ""
 
     return (
         f"Good morning, {recipient}.\n\n"
         f"Today’s concept: {lesson.concept}\n\n"
-        "Plain idea:\n\n"
+        "The idea:\n\n"
         f"{lesson.plain}\n\n"
-        "Analogy:\n\n"
+        "Picture it:\n\n"
         f"{lesson.analogy}\n\n"
-        "Tiny exercise:\n\n"
-        f"{lesson.exercise}"
-        f"{hands_on_text}"
+        "On the frontier:\n\n"
+        f"{lesson.frontier}\n\n"
+        "⚡ Bold move today:\n\n"
+        f"{lesson.bold_move}"
+        f"{lab_text}"
         f"{references_text}"
-        f"{notebook_text}"
     )
 
 
