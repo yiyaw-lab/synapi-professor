@@ -1,7 +1,7 @@
-"""The suggested 5-week study plan over the 30 lessons.
+"""The suggested 5-week study plan over the 30 foundation lessons.
 
-This is guidance for a human following the curriculum, not something the daily
-sender reads — ``professor.py`` cycles through ``LLM_FOUNDATION`` by date and
+This is guidance for a human following the foundation track, not something the
+daily sender reads — ``professor.py`` cycles through ``LLM_FOUNDATION`` by date and
 does not consult this file. ``LEARNING_PATH`` groups concepts into weekly themes
 (the ``focus`` lists use the same ``concept`` strings as the curriculum) and
 ``SCHEDULE_NOTES`` records pacing and the recommended per-lesson workflow.

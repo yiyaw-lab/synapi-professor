@@ -1,6 +1,6 @@
-"""Per-concept side data, all keyed by ``Lesson.concept``.
+"""Foundation per-concept side data, all keyed by ``Lesson.concept``.
 
-Kept separate from ``llm_foundation.py`` so the lesson text stays readable and
+Kept separate from ``foundation_llm.py`` so the lesson text stays readable and
 the links/tooling can change independently:
 
     REFERENCE_LIBRARY  concept -> 1-3 canonical URLs ("Go deeper" in the message)

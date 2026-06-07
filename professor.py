@@ -2,16 +2,20 @@
 
 The daily run is a short pipeline:
 
-    select_daily_lesson(LLM_FOUNDATION)   # deterministic from today's date
+    select_daily_lesson(track.lessons)    # deterministic from today's date
         -> build_message(recipient, ...)  # plain text with lab + reference links
         -> send_telegram_message(...)     # POST to the Telegram Bot API
 
-Configuration comes from environment variables (or a local ``.env``); see
-``load_config`` and the README's Configuration table. Lab links are built from
+Which track is sent is chosen by the ``CURRICULUM`` env var (``foundation`` by
+default, or ``advanced``); see ``curriculum.CURRICULA``. Other configuration comes
+from environment variables (or a local ``.env``); see ``load_config`` and the
+README's Configuration table. Lab links are built from
 ``GITHUB_REPO``/``GITHUB_BRANCH`` so a fork points at its own notebooks.
 
 Run directly to send today's lesson:  ``python professor.py``
 """
+
+from __future__ import annotations
 
 import os
 from datetime import date
@@ -19,8 +23,7 @@ from datetime import date
 import requests
 from dotenv import load_dotenv
 
-from curriculum.lesson_metadata import NOTEBOOK_FILES, REFERENCE_LIBRARY
-from curriculum.llm_foundation import LLM_FOUNDATION
+from curriculum import CURRICULA, DEFAULT_TRACK, Track
 from lesson_model import Lesson
 
 load_dotenv(override=True)
@@ -33,6 +36,10 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 # greeting ("Good morning."). GREETING sets the opening line's tone.
 RECIPIENT_NAME = os.getenv("RECIPIENT_NAME", "")
 GREETING = os.getenv("GREETING", "Good morning")
+
+# Which curriculum track to send: "foundation" (default) or "advanced".
+# Validated against curriculum.CURRICULA in load_config.
+CURRICULUM = os.getenv("CURRICULUM", DEFAULT_TRACK)
 
 # Repo slug used to build clickable lab links. The notebooks live on the
 # default branch under labs/; GitHub renders them and Colab runs them in-browser.
@@ -56,12 +63,22 @@ class TelegramSendError(RuntimeError):
     pass
 
 
-def load_config() -> tuple[str, str, str, str, str]:
+def resolve_track(name: str) -> Track:
+    """Look up the configured curriculum track, or fail with the valid options."""
+    track = CURRICULA.get(name)
+    if track is None:
+        valid = ", ".join(sorted(CURRICULA))
+        raise ConfigurationError(f"Unknown CURRICULUM '{name}'. Valid tracks: {valid}.")
+    return track
+
+
+def load_config() -> tuple[str, str, str, str, str, Track]:
     bot_token = TELEGRAM_BOT_TOKEN
     chat_id = TELEGRAM_CHAT_ID
     api_base = TELEGRAM_API_BASE_URL
     recipient = RECIPIENT_NAME
     greeting = GREETING
+    track = resolve_track(CURRICULUM)
 
     missing = [
         name
@@ -77,7 +94,7 @@ def load_config() -> tuple[str, str, str, str, str]:
 
     # The missing-check above guarantees these are set; assert narrows the types.
     assert bot_token is not None and chat_id is not None
-    return bot_token, chat_id, api_base, recipient, greeting
+    return bot_token, chat_id, api_base, recipient, greeting, track
 
 
 def select_daily_lesson(lessons: list[Lesson]) -> Lesson:
@@ -97,8 +114,22 @@ def format_greeting(greeting: str, recipient: str) -> str:
     return f"{greeting}, {name}." if name else f"{greeting}."
 
 
-def build_message(recipient: str, lesson: Lesson, greeting: str = "Good morning") -> str:
-    filename = NOTEBOOK_FILES.get(lesson.concept)
+def build_message(
+    recipient: str,
+    lesson: Lesson,
+    greeting: str = "Good morning",
+    notebooks: dict[str, str] | None = None,
+    references_by_concept: dict[str, list[str]] | None = None,
+) -> str:
+    # Default to the foundation track's maps so existing callers keep working.
+    notebooks = CURRICULA[DEFAULT_TRACK].notebooks if notebooks is None else notebooks
+    references_by_concept = (
+        CURRICULA[DEFAULT_TRACK].references
+        if references_by_concept is None
+        else references_by_concept
+    )
+
+    filename = notebooks.get(lesson.concept)
     if filename:
         lab_text = (
             "\n\n🧪 Lab (opens in Colab, runs as-is):\n"
@@ -108,7 +139,7 @@ def build_message(recipient: str, lesson: Lesson, greeting: str = "Good morning"
     else:
         lab_text = ""
 
-    references = REFERENCE_LIBRARY.get(lesson.concept, [])
+    references = references_by_concept.get(lesson.concept, [])
     references_text = "\n\nGo deeper:\n" + "\n".join(references) if references else ""
 
     return (
@@ -150,9 +181,15 @@ def send_telegram_message(bot_token: str, chat_id: str, text: str, api_base: str
 
 
 def main() -> int:
-    bot_token, chat_id, api_base, recipient, greeting = load_config()
-    lesson = select_daily_lesson(LLM_FOUNDATION)
-    message = build_message(recipient, lesson, greeting)
+    bot_token, chat_id, api_base, recipient, greeting, track = load_config()
+    lesson = select_daily_lesson(track.lessons)
+    message = build_message(
+        recipient,
+        lesson,
+        greeting,
+        notebooks=track.notebooks,
+        references_by_concept=track.references,
+    )
 
     result = send_telegram_message(bot_token, chat_id, message, api_base)
     print("Message sent successfully:", result)

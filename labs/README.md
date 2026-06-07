@@ -1,7 +1,8 @@
 # Labs
 
-One self-contained Jupyter notebook per curriculum concept (30 total). Each opens
-in Google Colab and runs top to bottom with **Runtime → Run all** — no local setup.
+One self-contained Jupyter notebook per curriculum concept across both tracks
+(60 total: 30 foundation `NN_…` + 30 advanced `aNN_…`). Each opens in Google Colab
+and runs top to bottom with **Runtime → Run all** — no local setup.
 
 Every notebook follows the same shape: an emoji header and hook, a quiet
 `%pip install` cell, a runnable demo, a **Try it** twist, a **Takeaway**, and a
@@ -20,7 +21,7 @@ python labs/_generate.py
 ```
 
 The generator also enforces that the notebooks it emits exactly match
-`NOTEBOOK_FILES` in [`../curriculum/lesson_metadata.py`](../curriculum/lesson_metadata.py),
+`NOTEBOOK_FILES` in [`../curriculum/foundation_metadata.py`](../curriculum/foundation_metadata.py),
 and rewrites `manifest.json`.
 
 ## Light vs. heavy (`manifest.json`)
@@ -35,6 +36,8 @@ The generator tags each notebook by execution cost so CI knows what to run:
 checked in [`../tests/test_curriculum.py`](../tests/test_curriculum.py).
 
 ## The notebooks
+
+### Foundation track
 
 | # | Notebook | Concept | Tier |
 |---|----------|---------|------|
@@ -70,4 +73,44 @@ checked in [`../tests/test_curriculum.py`](../tests/test_curriculum.py).
 | 30 | `30_systems_thinking.ipynb` | Systems Thinking for AI | light |
 
 The numbering follows the lesson order in
-[`../curriculum/llm_foundation.py`](../curriculum/llm_foundation.py).
+[`../curriculum/foundation_llm.py`](../curriculum/foundation_llm.py).
+
+### Advanced track
+
+All advanced labs are **light** (pure-numpy simulations), so CI executes them all.
+
+| # | Notebook | Concept |
+|---|----------|---------|
+| a01 | `a01_supervised_fine_tuning.ipynb` | Supervised Fine-Tuning |
+| a02 | `a02_rlhf.ipynb` | RLHF |
+| a03 | `a03_dpo.ipynb` | Direct Preference Optimization |
+| a04 | `a04_constitutional_ai.ipynb` | Constitutional AI |
+| a05 | `a05_reasoning_models.ipynb` | Reasoning Models |
+| a06 | `a06_reward_hacking.ipynb` | Reward Hacking |
+| a07 | `a07_peft_lora.ipynb` | Parameter-Efficient Fine-Tuning |
+| a08 | `a08_quantization.ipynb` | Quantization |
+| a09 | `a09_distillation.ipynb` | Knowledge Distillation |
+| a10 | `a10_mixture_of_experts.ipynb` | Mixture-of-Experts |
+| a11 | `a11_speculative_decoding.ipynb` | Speculative Decoding |
+| a12 | `a12_kv_cache.ipynb` | KV-Cache and Paged Attention |
+| a13 | `a13_flash_attention.ipynb` | FlashAttention |
+| a14 | `a14_state_space_models.ipynb` | State-Space Models |
+| a15 | `a15_long_context.ipynb` | Long-Context Methods |
+| a16 | `a16_multimodal.ipynb` | Multimodal Models |
+| a17 | `a17_grouped_query_attention.ipynb` | Grouped-Query Attention |
+| a18 | `a18_synthetic_data.ipynb` | Synthetic Data |
+| a19 | `a19_mech_interp.ipynb` | Mechanistic Interpretability |
+| a20 | `a20_sparse_autoencoders.ipynb` | Sparse Autoencoders |
+| a21 | `a21_activation_steering.ipynb` | Activation Steering |
+| a22 | `a22_model_editing.ipynb` | Model Editing |
+| a23 | `a23_scaling_laws_revisited.ipynb` | Scaling Laws Revisited |
+| a24 | `a24_grokking.ipynb` | Grokking |
+| a25 | `a25_tool_use.ipynb` | Tool Use |
+| a26 | `a26_agentic_loops.ipynb` | Agentic Loops |
+| a27 | `a27_advanced_rag.ipynb` | Advanced RAG |
+| a28 | `a28_llm_as_judge.ipynb` | LLM-as-a-Judge |
+| a29 | `a29_structured_outputs.ipynb` | Structured Outputs |
+| a30 | `a30_inference_economics.ipynb` | Inference Economics |
+
+The numbering follows the lesson order in
+[`../curriculum/advanced_llm.py`](../curriculum/advanced_llm.py).

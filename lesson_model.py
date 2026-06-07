@@ -1,7 +1,7 @@
 """The ``Lesson`` data model — the single shape every lesson conforms to.
 
 One lesson is the unit the professor sends each day. Keeping it a tiny frozen
-dataclass (no behavior) lets the curriculum in ``curriculum/llm_foundation.py``
+dataclass (no behavior) lets the curriculum in ``curriculum/foundation_llm.py``
 read as plain data and lets ``professor.build_message`` rely on a fixed set of
 fields. Each field maps to one section of the delivered message:
 

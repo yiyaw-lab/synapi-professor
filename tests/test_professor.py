@@ -6,7 +6,10 @@ import pytest
 import requests
 
 import professor
-from curriculum.lesson_metadata import NOTEBOOK_FILES, REFERENCE_LIBRARY
+from curriculum import CURRICULA
+from curriculum.advanced_llm import ADVANCED_LLM
+from curriculum.foundation_llm import LLM_FOUNDATION
+from curriculum.foundation_metadata import NOTEBOOK_FILES, REFERENCE_LIBRARY
 from lesson_model import Lesson
 
 SAMPLE = Lesson(
@@ -131,7 +134,7 @@ def test_load_config_returns_values_when_present(monkeypatch):
     monkeypatch.setattr(professor, "TELEGRAM_API_BASE_URL", "https://example.test")
     monkeypatch.setattr(professor, "RECIPIENT_NAME", "Pat")
     monkeypatch.setattr(professor, "GREETING", "Hey")
-    bot, chat, api, recipient, greeting = professor.load_config()
+    bot, chat, api, recipient, greeting, track = professor.load_config()
     assert (bot, chat, api, recipient, greeting) == (
         "tok",
         "123",
@@ -139,6 +142,8 @@ def test_load_config_returns_values_when_present(monkeypatch):
         "Pat",
         "Hey",
     )
+    # Default track is foundation.
+    assert track is CURRICULA["foundation"]
 
 
 def test_load_config_allows_empty_recipient(monkeypatch):
@@ -146,8 +151,57 @@ def test_load_config_allows_empty_recipient(monkeypatch):
     monkeypatch.setattr(professor, "TELEGRAM_BOT_TOKEN", "tok")
     monkeypatch.setattr(professor, "TELEGRAM_CHAT_ID", "123")
     monkeypatch.setattr(professor, "RECIPIENT_NAME", "")
-    _, _, _, recipient, _ = professor.load_config()
+    recipient = professor.load_config()[3]
     assert recipient == ""
+
+
+# --- track selection (CURRICULUM) ----------------------------------------
+
+
+def test_default_track_is_foundation(monkeypatch):
+    monkeypatch.setattr(professor, "TELEGRAM_BOT_TOKEN", "tok")
+    monkeypatch.setattr(professor, "TELEGRAM_CHAT_ID", "123")
+    monkeypatch.setattr(professor, "CURRICULUM", "foundation")
+    track = professor.load_config()[5]
+    assert track is CURRICULA["foundation"]
+    assert track.lessons is LLM_FOUNDATION
+
+
+def test_advanced_track_selects_advanced_lessons(monkeypatch):
+    monkeypatch.setattr(professor, "TELEGRAM_BOT_TOKEN", "tok")
+    monkeypatch.setattr(professor, "TELEGRAM_CHAT_ID", "123")
+    monkeypatch.setattr(professor, "CURRICULUM", "advanced")
+    track = professor.load_config()[5]
+    assert track is CURRICULA["advanced"]
+    assert track.lessons is ADVANCED_LLM
+
+
+def test_unknown_track_raises_config_error(monkeypatch):
+    monkeypatch.setattr(professor, "CURRICULUM", "nonsense")
+    with pytest.raises(professor.ConfigurationError) as exc:
+        professor.load_config()
+    assert "nonsense" in str(exc.value)
+    assert "foundation" in str(exc.value) and "advanced" in str(exc.value)
+
+
+def test_resolve_track_returns_correct_maps():
+    track = professor.resolve_track("advanced")
+    assert track.notebooks is CURRICULA["advanced"].notebooks
+    assert track.references is CURRICULA["advanced"].references
+
+
+def test_build_message_uses_advanced_track_lab_and_refs():
+    # An advanced lesson should link its advanced lab and references.
+    lesson = ADVANCED_LLM[2]  # Direct Preference Optimization
+    track = CURRICULA["advanced"]
+    msg = professor.build_message(
+        "Sam",
+        lesson,
+        notebooks=track.notebooks,
+        references_by_concept=track.references,
+    )
+    assert track.notebooks[lesson.concept] in msg
+    assert track.references[lesson.concept][0] in msg
 
 
 # --- send_telegram_message ----------------------------------------------
