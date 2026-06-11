@@ -21,3 +21,9 @@
 ```bash
 pip install -r requirements-dev.txt
 ```
+
+Local-environment gotcha: `python`/`pytest`/`ruff`/`mypy` resolve to Anaconda
+Python 3.9 on this machine while pyproject declares `requires-python = ">=3.10"`.
+The full gate passes under 3.9 today (verified 2026-06-11: 268 pytest, ruff clean),
+and python3.11 here has no deps installed — but if something fails strangely,
+check the version mismatch first.
