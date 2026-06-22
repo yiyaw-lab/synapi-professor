@@ -1,6 +1,7 @@
 # Synapi Professor
 
 [![CI](https://github.com/yiyaw-lab/synapi-professor/actions/workflows/ci.yml/badge.svg)](https://github.com/yiyaw-lab/synapi-professor/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 Meet **Prof. Syd** — a tiny daily professor for large language models, part of
 [Synapi](https://synapi.app) by Coaur.
@@ -93,6 +94,50 @@ truth, [labs/_generate.py](labs/_generate.py), and CI proves they still run (see
 [Development](#development)).
 
 ## How it works
+
+Each day a scheduled run picks one lesson deterministically from the date,
+formats it, and posts it to Telegram. The lessons and their per-concept lab and
+reference metadata live in the `CURRICULA` registry; the 60 Colab notebooks are
+generated from a single source of truth, and CI guards both the code and the
+notebooks against drift.
+
+```mermaid
+flowchart TD
+    subgraph trigger["Daily trigger — professor.yml"]
+        cron["cron / Run workflow"]
+    end
+
+    subgraph pipeline["professor.py"]
+        sel["select_daily_lesson<br/>date.toordinal() % len(lessons)"]
+        build["build_message<br/>concept · idea · analogy · frontier · bold move"]
+        send["send_telegram_message<br/>POST /sendMessage"]
+        sel --> build --> send
+    end
+
+    subgraph curr["CURRICULA registry — curriculum/__init__.py"]
+        found["Foundation track<br/>30 Lesson objects + refs"]
+        adv["Advanced track<br/>30 Lesson objects + refs"]
+    end
+
+    subgraph labs["Labs"]
+        gen["labs/_generate.py<br/>(source of truth)"]
+        nb["60 .ipynb notebooks<br/>+ manifest.json"]
+        gen --> nb
+    end
+
+    cron --> sel
+    curr -->|"CURRICULUM env selects a track"| build
+    build -->|"lab + reference links"| nb
+    send --> tg["Telegram chat"]
+    nb -->|"opens in Colab, runs as-is"| colab["Google Colab"]
+
+    subgraph ci["CI — ci.yml"]
+        checks["ruff · mypy · pytest<br/>no-drift check · execute lightweight labs"]
+    end
+    gen -.->|"regenerate must match"| checks
+    pipeline -.->|"tested by"| checks
+    curr -.->|"integrity tests"| checks
+```
 
 ```
 professor.py            entry point: pick the day's lesson, build it, send it
